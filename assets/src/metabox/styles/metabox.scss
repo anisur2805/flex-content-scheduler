@@ -1,0 +1,32 @@
+.fcs-metabox {
+  display: grid;
+  gap: 10px;
+}
+
+.fcs-metabox label {
+  display: grid;
+  gap: 4px;
+  font-weight: 600;
+}
+
+.fcs-metabox input,
+.fcs-metabox select {
+  width: 100%;
+}
+
+.fcs-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.fcs-countdown {
+  font-weight: 600;
+}
+
+.fcs-message.success {
+  color: #007017;
+}
+
+.fcs-message.error {
+  color: #b00020;
+}

@@ -1,0 +1,21 @@
+.fcs-admin-app {
+  display: grid;
+  gap: 24px;
+  max-width: 980px;
+}
+
+.fcs-form,
+.fcs-filters,
+.fcs-settings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.fcs-pagination {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}

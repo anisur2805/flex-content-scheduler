@@ -1,0 +1,28 @@
+{
+  "name": "flex-content-scheduler",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "webpack --mode production",
+    "dev": "webpack --mode development --watch"
+  },
+  "dependencies": {
+    "@wordpress/api-fetch": "^6.0",
+    "@wordpress/components": "^25.0",
+    "@wordpress/element": "^5.0",
+    "@wordpress/i18n": "^4.0",
+    "react": "^18.0",
+    "react-dom": "^18.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0",
+    "@babel/preset-env": "^7.0",
+    "@babel/preset-react": "^7.0",
+    "babel-loader": "^9.0",
+    "css-loader": "^6.0",
+    "mini-css-extract-plugin": "^2.0",
+    "sass": "^1.0",
+    "sass-loader": "^13.0",
+    "webpack": "^5.0",
+    "webpack-cli": "^5.0"
+  }
+}

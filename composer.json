@@ -1,0 +1,19 @@
+{
+  "name": "anisur2805/flex-content-scheduler",
+  "description": "Schedule post expiry and visibility changes in WordPress",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0-or-later",
+  "autoload": {
+    "psr-4": {
+      "Anisur\\ContentScheduler\\": "includes/"
+    }
+  },
+  "require": {
+    "php": ">=7.4"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.0",
+    "brain/monkey": "^2.6",
+    "mockery/mockery": "^1.5"
+  }
+}
