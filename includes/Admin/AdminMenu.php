@@ -39,22 +39,22 @@ class AdminMenu {
 
 		wp_enqueue_script(
 			'fcs-admin',
-			FCS_PLUGIN_URL . 'assets/dist/admin.js',
+			FLEX_CS_PLUGIN_URL . 'assets/dist/admin.js',
 			array( 'wp-element', 'wp-api-fetch', 'wp-i18n', 'wp-components' ),
-			FCS_VERSION,
+			FLEX_CS_VERSION,
 			true
 		);
 
 		wp_enqueue_style(
 			'fcs-admin',
-			FCS_PLUGIN_URL . 'assets/dist/admin.css',
+			FLEX_CS_PLUGIN_URL . 'assets/dist/admin.css',
 			array(),
-			FCS_VERSION
+			FLEX_CS_VERSION
 		);
 
 		wp_localize_script(
 			'fcs-admin',
-			'fcsAdmin',
+			'flexCSAdmin',
 			array(
 				'restUrl'   => esc_url_raw( rest_url( 'fcs/v1' ) ),
 				'nonce'     => wp_create_nonce( 'wp_rest' ),

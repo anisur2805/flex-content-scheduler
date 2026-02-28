@@ -97,22 +97,22 @@ class MetaBox {
 
 		wp_enqueue_script(
 			'fcs-metabox',
-			FCS_PLUGIN_URL . 'assets/dist/metabox.js',
+			FLEX_CS_PLUGIN_URL . 'assets/dist/metabox.js',
 			array( 'wp-element', 'wp-api-fetch', 'wp-i18n' ),
-			FCS_VERSION,
+			FLEX_CS_VERSION,
 			true
 		);
 
 		wp_enqueue_style(
 			'fcs-metabox',
-			FCS_PLUGIN_URL . 'assets/dist/metabox.css',
+			FLEX_CS_PLUGIN_URL . 'assets/dist/metabox.css',
 			array(),
-			FCS_VERSION
+			FLEX_CS_VERSION
 		);
 
 		wp_localize_script(
 			'fcs-metabox',
-			'fcsMetabox',
+			'flexCSMetabox',
 			array(
 				'restUrl'  => esc_url_raw( rest_url( 'fcs/v1' ) ),
 				'nonce'    => wp_create_nonce( 'wp_rest' ),

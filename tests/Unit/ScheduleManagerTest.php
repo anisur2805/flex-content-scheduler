@@ -3,7 +3,7 @@
 use Anisur\ContentScheduler\Scheduler\ScheduleManager;
 use PHPUnit\Framework\TestCase;
 
-class FCS_WPDB_Stub {
+class FLEX_CS_WPDB_Stub {
 	public int $insert_id = 0;
 	public array $last_insert = array();
 	public array $last_update = array();
@@ -94,7 +94,7 @@ class ScheduleManagerForUpdateTest extends ScheduleManager {
 class ScheduleManagerTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
-		$GLOBALS['wpdb']                 = new FCS_WPDB_Stub();
+		$GLOBALS['wpdb']                 = new FLEX_CS_WPDB_Stub();
 		$GLOBALS['fcs_actions_fired']   = array();
 		$GLOBALS['fcs_stub_post_exists'] = true;
 	}

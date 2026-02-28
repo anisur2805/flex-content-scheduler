@@ -13,7 +13,7 @@ use Anisur\ContentScheduler\Scheduler\ScheduleManager;
 class Plugin {
 	private Loader $loader;
 	private string $plugin_slug = 'flex-content-scheduler';
-	private string $version = FCS_VERSION;
+	private string $version = FLEX_CS_VERSION;
 
 	private ScheduleManager $schedule_manager;
 	private ExpiryActions $expiry_actions;
@@ -39,7 +39,7 @@ class Plugin {
 	}
 
 	public function load_textdomain(): void {
-		load_plugin_textdomain( 'flex-content-scheduler', false, dirname( plugin_basename( FCS_PLUGIN_FILE ) ) . '/languages/' );
+		load_plugin_textdomain( 'flex-content-scheduler', false, dirname( plugin_basename( FLEX_CS_PLUGIN_FILE ) ) . '/languages/' );
 	}
 
 	private function define_admin_hooks(): void {

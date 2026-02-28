@@ -58,7 +58,7 @@ function parsePossiblyPollutedJson(rawText) {
 }
 
 async function request(endpoint, { method = 'GET', data } = {}) {
-  const base = (window.fcsMetabox?.restUrl || '').replace(/\/$/, '');
+  const base = (window.flexCSMetabox?.restUrl || '').replace(/\/$/, '');
   const url = `${base}${endpoint}`;
 
   const response = await fetch(url, {
@@ -66,7 +66,7 @@ async function request(endpoint, { method = 'GET', data } = {}) {
     credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json',
-      'X-WP-Nonce': window.fcsMetabox?.nonce || ''
+      'X-WP-Nonce': window.flexCSMetabox?.nonce || ''
     },
     body: data ? JSON.stringify(data) : undefined
   });
@@ -89,7 +89,7 @@ export default function MetaBox() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState(null);
 
-  const postId = window.fcsMetabox?.postId || 0;
+  const postId = window.flexCSMetabox?.postId || 0;
 
   useEffect(() => {
     if (!postId) return;

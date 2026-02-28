@@ -22,7 +22,7 @@ export default function ScheduleForm({ onSaved }) {
     };
 
     try {
-      await apiFetch({ path: '/fcs/v1/schedules', method: 'POST', data: payload, headers: { 'X-WP-Nonce': window.fcsAdmin?.nonce } });
+      await apiFetch({ path: '/fcs/v1/schedules', method: 'POST', data: payload, headers: { 'X-WP-Nonce': window.flexCSAdmin?.nonce } });
       setPostId('');
       setExpiryDate('');
       setRedirectUrl('');

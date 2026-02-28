@@ -17,7 +17,7 @@ class Activator {
 		global $wp_version;
 
 		if ( version_compare( PHP_VERSION, '7.4', '<' ) || version_compare( (string) $wp_version, '6.0', '<' ) ) {
-			deactivate_plugins( plugin_basename( FCS_PLUGIN_FILE ) );
+			deactivate_plugins( plugin_basename( FLEX_CS_PLUGIN_FILE ) );
 			wp_die( esc_html__( 'Flex Content Scheduler requires WordPress 6.0+ and PHP 7.4+.', 'flex-content-scheduler' ) );
 		}
 
@@ -31,7 +31,7 @@ class Activator {
 		remove_filter( 'cron_schedules', array( __CLASS__, 'add_every_minute_schedule' ) );
 
 		flush_rewrite_rules();
-		update_option( 'fcs_version', FCS_VERSION );
+		update_option( 'fcs_version', FLEX_CS_VERSION );
 		if ( false === get_option( 'fcs_settings', false ) ) {
 			update_option(
 				'fcs_settings',

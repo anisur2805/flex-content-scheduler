@@ -10,7 +10,7 @@ class ContentScheduledTrigger {
 	public function handle( int $schedule_id, array $data ): void {
 		do_action(
 			'fcs_automator_trigger',
-			'FCS_CONTENT_SCHEDULED',
+			'FLEX_CS_CONTENT_SCHEDULED',
 			array(
 				'SCHEDULE_ID'   => $schedule_id,
 				'POST_ID'       => (int) ( $data['post_id'] ?? 0 ),

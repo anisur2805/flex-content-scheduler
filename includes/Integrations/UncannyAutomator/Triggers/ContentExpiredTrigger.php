@@ -14,7 +14,7 @@ class ContentExpiredTrigger {
 
 		do_action(
 			'fcs_automator_trigger',
-			'FCS_CONTENT_EXPIRED',
+			'FLEX_CS_CONTENT_EXPIRED',
 			array(
 				'POST_ID'       => (int) $schedule->post_id,
 				'POST_TITLE'    => get_the_title( (int) $schedule->post_id ),

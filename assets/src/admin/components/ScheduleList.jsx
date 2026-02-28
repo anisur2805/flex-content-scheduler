@@ -11,7 +11,7 @@ export default function ScheduleList({ refreshToken }) {
   useEffect(() => {
     setLoading(true);
     const query = new URLSearchParams({ page: String(page), per_page: '20', ...filters });
-    apiFetch({ path: `/fcs/v1/schedules?${query.toString()}`, headers: { 'X-WP-Nonce': window.fcsAdmin?.nonce } })
+    apiFetch({ path: `/fcs/v1/schedules?${query.toString()}`, headers: { 'X-WP-Nonce': window.flexCSAdmin?.nonce } })
       .then((res) => {
         setItems(Array.isArray(res) ? res : []);
       })
@@ -25,7 +25,7 @@ export default function ScheduleList({ refreshToken }) {
       <div className="fcs-filters">
         <select value={filters.post_type} onChange={(e) => setFilters({ ...filters, post_type: e.target.value })}>
           <option value="">All post types</option>
-          {(window.fcsAdmin?.postTypes || []).map((t) => (
+          {(window.flexCSAdmin?.postTypes || []).map((t) => (
             <option key={t.slug} value={t.slug}>{t.label}</option>
           ))}
         </select>

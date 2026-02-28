@@ -2,7 +2,7 @@ import { useState } from 'react';
 import apiFetch from '@wordpress/api-fetch';
 
 export default function SettingsPanel() {
-  const current = window.fcsAdmin?.settings || {};
+  const current = window.flexCSAdmin?.settings || {};
   const [settings, setSettings] = useState({
     default_action: current.default_action || 'unpublish',
     cron_enabled: current.cron_enabled ?? true,
@@ -19,7 +19,7 @@ export default function SettingsPanel() {
         path: '/fcs/v1/settings',
         method: 'PUT',
         data: settings,
-        headers: { 'X-WP-Nonce': window.fcsAdmin?.nonce }
+        headers: { 'X-WP-Nonce': window.flexCSAdmin?.nonce }
       });
       setSettings(updated);
       setMessage('Settings saved.');
