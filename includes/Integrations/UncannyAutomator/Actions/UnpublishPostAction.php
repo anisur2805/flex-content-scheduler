@@ -9,7 +9,7 @@ class UnpublishPostAction {
 
 	public function __construct( ExpiryActions $expiry_actions ) {
 		$this->expiry_actions = $expiry_actions;
-		add_action( 'fcs_automator_action_unpublish', array( $this, 'handle' ), 10, 1 );
+		add_action( 'flex_cs_automator_action_unpublish', array( $this, 'handle' ), 10, 1 );
 	}
 
 	public function handle( int $post_id ): void {

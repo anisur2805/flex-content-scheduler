@@ -25,16 +25,16 @@ class Activator {
 		$table->create_table();
 
 		add_filter( 'cron_schedules', array( __CLASS__, 'add_every_minute_schedule' ) );
-		if ( ! wp_next_scheduled( 'fcs_process_schedules' ) ) {
-			wp_schedule_event( time(), 'every_minute', 'fcs_process_schedules' );
+		if ( ! wp_next_scheduled( 'flex_cs_process_schedules' ) ) {
+			wp_schedule_event( time(), 'every_minute', 'flex_cs_process_schedules' );
 		}
 		remove_filter( 'cron_schedules', array( __CLASS__, 'add_every_minute_schedule' ) );
 
 		flush_rewrite_rules();
-		update_option( 'fcs_version', FLEX_CS_VERSION );
-		if ( false === get_option( 'fcs_settings', false ) ) {
+		update_option( 'flex_cs_version', FLEX_CS_VERSION );
+		if ( false === get_option( 'flex_cs_settings', false ) ) {
 			update_option(
-				'fcs_settings',
+				'flex_cs_settings',
 				array(
 					'default_action'     => 'unpublish',
 					'cron_enabled'       => true,

@@ -9,7 +9,7 @@ use WP_REST_Request;
 use WP_REST_Response;
 
 class ScheduleRestController extends WP_REST_Controller {
-	protected $namespace = 'fcs/v1';
+	protected $namespace = 'flex-cs/v1';
 	protected $rest_base = 'schedules';
 
 	private ScheduleManager $schedule_manager;
@@ -170,7 +170,7 @@ class ScheduleRestController extends WP_REST_Controller {
 					return new WP_Error( $error->get_error_code(), $error->get_error_message(), array( 'status' => 400 ) );
 				}
 
-				return new WP_Error( 'fcs_create_failed', __( 'Could not create schedule.', 'flex-content-scheduler' ), array( 'status' => 400 ) );
+				return new WP_Error( 'flex_cs_create_failed', __( 'Could not create schedule.', 'flex-content-scheduler' ), array( 'status' => 400 ) );
 			}
 
 			$item = $this->schedule_manager->get_schedule( (int) $id );
@@ -188,7 +188,7 @@ class ScheduleRestController extends WP_REST_Controller {
 			$item = $this->schedule_manager->get_schedule( $id );
 
 			if ( ! $item ) {
-				return new WP_Error( 'fcs_not_found', __( 'Schedule not found.', 'flex-content-scheduler' ), array( 'status' => 404 ) );
+				return new WP_Error( 'flex_cs_not_found', __( 'Schedule not found.', 'flex-content-scheduler' ), array( 'status' => 404 ) );
 			}
 
 			return $this->prepare_item_for_response( $item, $request );
@@ -209,7 +209,7 @@ class ScheduleRestController extends WP_REST_Controller {
 				if ( $error instanceof WP_Error ) {
 					return new WP_Error( $error->get_error_code(), $error->get_error_message(), array( 'status' => 400 ) );
 				}
-				return new WP_Error( 'fcs_update_failed', __( 'Could not update schedule.', 'flex-content-scheduler' ), array( 'status' => 400 ) );
+				return new WP_Error( 'flex_cs_update_failed', __( 'Could not update schedule.', 'flex-content-scheduler' ), array( 'status' => 400 ) );
 			}
 
 			return new WP_REST_Response( $this->prepare_schedule_data( $this->schedule_manager->get_schedule( $id ) ), 200 );
@@ -227,7 +227,7 @@ class ScheduleRestController extends WP_REST_Controller {
 				if ( $error instanceof WP_Error ) {
 					return new WP_Error( $error->get_error_code(), $error->get_error_message(), array( 'status' => 400 ) );
 				}
-				return new WP_Error( 'fcs_delete_failed', __( 'Could not delete schedule.', 'flex-content-scheduler' ), array( 'status' => 400 ) );
+				return new WP_Error( 'flex_cs_delete_failed', __( 'Could not delete schedule.', 'flex-content-scheduler' ), array( 'status' => 400 ) );
 			}
 
 			return new WP_REST_Response( array( 'deleted' => true ), 200 );
@@ -295,10 +295,10 @@ class ScheduleRestController extends WP_REST_Controller {
 
 			$allowed_actions = array( 'unpublish', 'delete', 'redirect', 'change_status' );
 			if ( ! in_array( $settings['default_action'], $allowed_actions, true ) ) {
-				return new WP_Error( 'fcs_invalid_default_action', __( 'Invalid default action.', 'flex-content-scheduler' ), array( 'status' => 400 ) );
+				return new WP_Error( 'flex_cs_invalid_default_action', __( 'Invalid default action.', 'flex-content-scheduler' ), array( 'status' => 400 ) );
 			}
 
-			update_option( 'fcs_settings', $settings, false );
+			update_option( 'flex_cs_settings', $settings, false );
 
 			return new WP_REST_Response( $this->get_sanitized_settings(), 200 );
 		} finally {
@@ -309,7 +309,7 @@ class ScheduleRestController extends WP_REST_Controller {
 	public function get_item_schema() {
 		return array(
 			'$schema'    => 'http://json-schema.org/draft-04/schema#',
-			'title'      => 'fcs_schedule',
+			'title'      => 'flex_cs_schedule',
 			'type'       => 'object',
 			'properties' => array(
 				'id'            => array( 'type' => 'integer' ),
@@ -361,7 +361,7 @@ class ScheduleRestController extends WP_REST_Controller {
 	}
 
 	private function get_sanitized_settings(): array {
-		$settings = get_option( 'fcs_settings', array() );
+		$settings = get_option( 'flex_cs_settings', array() );
 		$settings = is_array( $settings ) ? $settings : array();
 
 		return array(
@@ -383,7 +383,7 @@ class ScheduleRestController extends WP_REST_Controller {
 		while ( ob_get_level() > $initial_level ) {
 			$buffer = (string) ob_get_clean();
 			if ( '' !== trim( $buffer ) && defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-				error_log( '[FCS] Unexpected REST output: ' . $buffer );
+				error_log( '[FLEX_CS] Unexpected REST output: ' . $buffer );
 			}
 		}
 	}

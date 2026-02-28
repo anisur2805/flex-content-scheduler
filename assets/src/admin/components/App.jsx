@@ -7,7 +7,7 @@ export default function App() {
   const [refreshToken, setRefreshToken] = useState(0);
 
   return (
-    <div className="fcs-admin-app">
+    <div className="flex-cs-admin-app">
       <ScheduleForm onSaved={() => setRefreshToken((v) => v + 1)} />
       <ScheduleList refreshToken={refreshToken} />
       <SettingsPanel />

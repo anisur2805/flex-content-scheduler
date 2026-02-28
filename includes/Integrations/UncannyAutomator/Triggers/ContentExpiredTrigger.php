@@ -4,7 +4,7 @@ namespace Anisur\ContentScheduler\Integrations\UncannyAutomator\Triggers;
 
 class ContentExpiredTrigger {
 	public function __construct() {
-		add_action( 'fcs_after_expiry_action', array( $this, 'handle' ), 10, 2 );
+		add_action( 'flex_cs_after_expiry_action', array( $this, 'handle' ), 10, 2 );
 	}
 
 	public function handle( object $schedule, bool $result ): void {
@@ -13,7 +13,7 @@ class ContentExpiredTrigger {
 		}
 
 		do_action(
-			'fcs_automator_trigger',
+			'flex_cs_automator_trigger',
 			'FLEX_CS_CONTENT_EXPIRED',
 			array(
 				'POST_ID'       => (int) $schedule->post_id,

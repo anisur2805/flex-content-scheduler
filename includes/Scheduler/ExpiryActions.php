@@ -31,7 +31,7 @@ class ExpiryActions {
 			return false;
 		}
 
-		do_action( 'fcs_before_expiry_action', $schedule );
+		do_action( 'flex_cs_before_expiry_action', $schedule );
 
 		$result = false;
 
@@ -50,7 +50,7 @@ class ExpiryActions {
 				break;
 		}
 
-		do_action( 'fcs_after_expiry_action', $schedule, $result );
+		do_action( 'flex_cs_after_expiry_action', $schedule, $result );
 
 		return $result;
 	}
@@ -71,7 +71,7 @@ class ExpiryActions {
 		);
 
 		// If a previous redirect action was processed, clear it for non-redirect actions.
-		delete_post_meta( $post_id, '_fcs_redirect_url' );
+		delete_post_meta( $post_id, '_flex_cs_redirect_url' );
 
 		return ! is_wp_error( $result );
 	}
@@ -98,7 +98,7 @@ class ExpiryActions {
 			return false;
 		}
 
-		return (bool) update_post_meta( $post_id, '_fcs_redirect_url', esc_url_raw( $url ) );
+		return (bool) update_post_meta( $post_id, '_flex_cs_redirect_url', esc_url_raw( $url ) );
 	}
 
 	/**
@@ -122,7 +122,7 @@ class ExpiryActions {
 		);
 
 		// If a previous redirect action was processed, clear it for non-redirect actions.
-		delete_post_meta( $post_id, '_fcs_redirect_url' );
+		delete_post_meta( $post_id, '_flex_cs_redirect_url' );
 
 		return ! is_wp_error( $result );
 	}
@@ -142,7 +142,7 @@ class ExpiryActions {
 			return;
 		}
 
-		$url = get_post_meta( $post_id, '_fcs_redirect_url', true );
+		$url = get_post_meta( $post_id, '_flex_cs_redirect_url', true );
 		if ( ! empty( $url ) && wp_http_validate_url( $url ) ) {
 			$redirect_url = esc_url_raw( $url );
 			$host         = wp_parse_url( $redirect_url, PHP_URL_HOST );

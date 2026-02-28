@@ -165,10 +165,10 @@ export default function MetaBox() {
   };
 
   return (
-    <div className="fcs-metabox">
+    <div className="flex-cs-metabox">
       {loading ? <p>Loading...</p> : null}
-      {message ? <p className={`fcs-message ${message.type}`}>{message.text}</p> : null}
-      {countdown ? <p className="fcs-countdown">{countdown}</p> : null}
+      {message ? <p className={`flex-cs-message ${message.type}`}>{message.text}</p> : null}
+      {countdown ? <p className="flex-cs-countdown">{countdown}</p> : null}
 
       <label>
         Expiry Date
@@ -218,7 +218,7 @@ export default function MetaBox() {
         </label>
       ) : null}
 
-      <div className="fcs-actions">
+      <div className="flex-cs-actions">
         <button type="button" className="button button-primary" disabled={saving} onClick={submit}>
           {saving ? 'Saving...' : existing ? 'Update' : 'Save'}
         </button>

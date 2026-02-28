@@ -11,7 +11,7 @@ export default function ScheduleList({ refreshToken }) {
   useEffect(() => {
     setLoading(true);
     const query = new URLSearchParams({ page: String(page), per_page: '20', ...filters });
-    apiFetch({ path: `/fcs/v1/schedules?${query.toString()}`, headers: { 'X-WP-Nonce': window.flexCSAdmin?.nonce } })
+    apiFetch({ path: `/flex-cs/v1/schedules?${query.toString()}`, headers: { 'X-WP-Nonce': window.flexCSAdmin?.nonce } })
       .then((res) => {
         setItems(Array.isArray(res) ? res : []);
       })
@@ -22,7 +22,7 @@ export default function ScheduleList({ refreshToken }) {
   return (
     <section>
       <h2>Scheduled Content</h2>
-      <div className="fcs-filters">
+      <div className="flex-cs-filters">
         <select value={filters.post_type} onChange={(e) => setFilters({ ...filters, post_type: e.target.value })}>
           <option value="">All post types</option>
           {(window.flexCSAdmin?.postTypes || []).map((t) => (
@@ -66,7 +66,7 @@ export default function ScheduleList({ refreshToken }) {
         </tbody>
       </table>
 
-      <div className="fcs-pagination">
+      <div className="flex-cs-pagination">
         <button type="button" className="button" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
           Previous
         </button>

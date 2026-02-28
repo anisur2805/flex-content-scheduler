@@ -18,9 +18,9 @@ if ( ! class_exists( 'WP_REST_Controller' ) ) {
 	class WP_REST_Controller {}
 }
 
-$GLOBALS['fcs_actions_fired'] = array();
-$GLOBALS['fcs_stub_post_exists'] = true;
-$GLOBALS['fcs_deleted_meta'] = array();
+$GLOBALS['flex_cs_actions_fired'] = array();
+$GLOBALS['flex_cs_stub_post_exists'] = true;
+$GLOBALS['flex_cs_deleted_meta'] = array();
 
 if ( ! function_exists( '__' ) ) {
 	function __( string $text, string $domain = '' ): string {
@@ -39,7 +39,7 @@ if ( ! function_exists( 'get_post' ) ) {
 		if ( $post_id <= 0 ) {
 			return null;
 		}
-		return ! empty( $GLOBALS['fcs_stub_post_exists'] ) ? (object) array( 'ID' => $post_id ) : null;
+		return ! empty( $GLOBALS['flex_cs_stub_post_exists'] ) ? (object) array( 'ID' => $post_id ) : null;
 	}
 }
 
@@ -51,7 +51,7 @@ if ( ! function_exists( 'apply_filters' ) ) {
 
 if ( ! function_exists( 'do_action' ) ) {
 	function do_action( string $hook, ...$args ): void {
-		$GLOBALS['fcs_actions_fired'][] = array(
+		$GLOBALS['flex_cs_actions_fired'][] = array(
 			'hook' => $hook,
 			'args' => $args,
 		);
@@ -120,7 +120,7 @@ if ( ! function_exists( 'update_post_meta' ) ) {
 
 if ( ! function_exists( 'delete_post_meta' ) ) {
 	function delete_post_meta( int $post_id, string $meta_key ): bool {
-		$GLOBALS['fcs_deleted_meta'][] = array(
+		$GLOBALS['flex_cs_deleted_meta'][] = array(
 			'post_id'  => $post_id,
 			'meta_key' => $meta_key,
 		);
@@ -130,7 +130,7 @@ if ( ! function_exists( 'delete_post_meta' ) ) {
 
 if ( ! function_exists( 'get_option' ) ) {
 	function get_option( string $option, $default = false ) {
-		if ( 'fcs_settings' === $option ) {
+		if ( 'flex_cs_settings' === $option ) {
 			return array(
 				'default_action' => 'unpublish',
 				'cron_enabled'   => true,

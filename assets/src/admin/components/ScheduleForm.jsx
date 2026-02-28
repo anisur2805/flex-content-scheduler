@@ -22,7 +22,7 @@ export default function ScheduleForm({ onSaved }) {
     };
 
     try {
-      await apiFetch({ path: '/fcs/v1/schedules', method: 'POST', data: payload, headers: { 'X-WP-Nonce': window.flexCSAdmin?.nonce } });
+      await apiFetch({ path: '/flex-cs/v1/schedules', method: 'POST', data: payload, headers: { 'X-WP-Nonce': window.flexCSAdmin?.nonce } });
       setPostId('');
       setExpiryDate('');
       setRedirectUrl('');
@@ -35,7 +35,7 @@ export default function ScheduleForm({ onSaved }) {
   return (
     <section>
       <h2>Add Schedule</h2>
-      <form className="fcs-form" onSubmit={submit}>
+      <form className="flex-cs-form" onSubmit={submit}>
         <input type="number" placeholder="Post ID" value={postId} onChange={(e) => setPostId(e.target.value)} required />
         <input type="datetime-local" value={expiryDate} onChange={(e) => setExpiryDate(e.target.value)} required />
         <select value={action} onChange={(e) => setAction(e.target.value)}>

@@ -23,8 +23,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( isset( $_SERVER['REQUEST_URI'] ) ) {
 	$flex_cs_request_uri = (string) $_SERVER['REQUEST_URI'];
 	if (
-		false !== strpos( $flex_cs_request_uri, '/wp-json/fcs/' ) ||
-		false !== strpos( $flex_cs_request_uri, 'rest_route=/fcs/' ) ||
+		false !== strpos( $flex_cs_request_uri, '/wp-json/flex_cs/' ) ||
+		false !== strpos( $flex_cs_request_uri, 'rest_route=/flex_cs/' ) ||
 		false !== strpos( $flex_cs_request_uri, 'rest_route=%2Ffcs%2F' )
 	) {
 		@ini_set( 'display_errors', '0' ); // phpcs:ignore WordPress.PHP.IniSet.display_errors_Disallowed

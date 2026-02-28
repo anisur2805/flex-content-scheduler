@@ -23,22 +23,22 @@ class AdminMenu {
 			__( 'Content Schedules', 'flex-content-scheduler' ),
 			__( 'Content Schedules', 'flex-content-scheduler' ),
 			'manage_options',
-			'fcs-schedules',
+			'flex-cs-schedules',
 			array( $this, 'render_page' )
 		);
 	}
 
 	public function render_page(): void {
-		echo '<div class="wrap"><h1>' . esc_html__( 'Flex Content Scheduler', 'flex-content-scheduler' ) . '</h1><div id="fcs-admin-root"></div></div>';
+		echo '<div class="wrap"><h1>' . esc_html__( 'Flex Content Scheduler', 'flex-content-scheduler' ) . '</h1><div id="flex-cs-admin-root"></div></div>';
 	}
 
 	public function enqueue_scripts( string $hook ): void {
-		if ( 'tools_page_fcs-schedules' !== $hook ) {
+		if ( 'tools_page_flex-cs-schedules' !== $hook ) {
 			return;
 		}
 
 		wp_enqueue_script(
-			'fcs-admin',
+			'flex-cs-admin',
 			FLEX_CS_PLUGIN_URL . 'assets/dist/admin.js',
 			array( 'wp-element', 'wp-api-fetch', 'wp-i18n', 'wp-components' ),
 			FLEX_CS_VERSION,
@@ -46,21 +46,21 @@ class AdminMenu {
 		);
 
 		wp_enqueue_style(
-			'fcs-admin',
+			'flex-cs-admin',
 			FLEX_CS_PLUGIN_URL . 'assets/dist/admin.css',
 			array(),
 			FLEX_CS_VERSION
 		);
 
 		wp_localize_script(
-			'fcs-admin',
+			'flex-cs-admin',
 			'flexCSAdmin',
 			array(
-				'restUrl'   => esc_url_raw( rest_url( 'fcs/v1' ) ),
+				'restUrl'   => esc_url_raw( rest_url( 'flex-cs/v1' ) ),
 				'nonce'     => wp_create_nonce( 'wp_rest' ),
 				'postTypes' => PostTypeHelper::get_public_post_types(),
 				'settings'  => get_option(
-					'fcs_settings',
+					'flex_cs_settings',
 					array(
 						'default_action'     => 'unpublish',
 						'cron_enabled'       => true,

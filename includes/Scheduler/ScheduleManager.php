@@ -21,10 +21,10 @@ class ScheduleManager {
 		}
 
 		$sanitized = $this->sanitize( $data );
-		$sanitized = apply_filters( 'fcs_schedule_data_before_insert', $sanitized );
+		$sanitized = apply_filters( 'flex_cs_schedule_data_before_insert', $sanitized );
 
 		if ( 'redirect' !== $sanitized['expiry_action'] ) {
-			delete_post_meta( (int) $sanitized['post_id'], '_fcs_redirect_url' );
+			delete_post_meta( (int) $sanitized['post_id'], '_flex_cs_redirect_url' );
 		}
 
 		$suppress_state = $wpdb->suppress_errors( true );
@@ -37,7 +37,7 @@ class ScheduleManager {
 
 		if ( false === $result ) {
 			$this->last_error = new WP_Error(
-				'fcs_db_insert_failed',
+				'flex_cs_db_insert_failed',
 				! empty( $wpdb->last_error ) ? $wpdb->last_error : __( 'Database insert failed.', 'flex-content-scheduler' )
 			);
 			if ( false !== stripos( (string) $wpdb->last_error, 'doesn' ) && false !== stripos( (string) $wpdb->last_error, 'exist' ) ) {
@@ -51,7 +51,7 @@ class ScheduleManager {
 				$wpdb->suppress_errors( $suppress_state );
 				if ( false === $result ) {
 					$this->last_error = new WP_Error(
-						'fcs_db_insert_failed',
+						'flex_cs_db_insert_failed',
 						! empty( $wpdb->last_error ) ? $wpdb->last_error : __( 'Database insert failed.', 'flex-content-scheduler' )
 					);
 					return false;
@@ -66,7 +66,7 @@ class ScheduleManager {
 		}
 
 		$id = (int) $wpdb->insert_id;
-		do_action( 'fcs_schedule_created', $id, $sanitized );
+		do_action( 'flex_cs_schedule_created', $id, $sanitized );
 		$this->maybe_schedule_processing_event( (string) $sanitized['expiry_date'] );
 
 		return $id;
@@ -79,7 +79,7 @@ class ScheduleManager {
 		$this->ensure_table_ready();
 
 		if ( ! $this->get_schedule( $schedule_id ) ) {
-			$this->last_error = new WP_Error( 'fcs_schedule_not_found', __( 'Schedule not found.', 'flex-content-scheduler' ) );
+			$this->last_error = new WP_Error( 'flex_cs_schedule_not_found', __( 'Schedule not found.', 'flex-content-scheduler' ) );
 			return false;
 		}
 
@@ -92,7 +92,7 @@ class ScheduleManager {
 		$sanitized = $this->sanitize( $data );
 
 		if ( 'redirect' !== $sanitized['expiry_action'] ) {
-			delete_post_meta( (int) $sanitized['post_id'], '_fcs_redirect_url' );
+			delete_post_meta( (int) $sanitized['post_id'], '_flex_cs_redirect_url' );
 		}
 
 		$suppress_state = $wpdb->suppress_errors( true );
@@ -107,13 +107,13 @@ class ScheduleManager {
 
 		if ( false === $result ) {
 			$this->last_error = new WP_Error(
-				'fcs_db_update_failed',
+				'flex_cs_db_update_failed',
 				! empty( $wpdb->last_error ) ? $wpdb->last_error : __( 'Database update failed.', 'flex-content-scheduler' )
 			);
 			return false;
 		}
 
-		do_action( 'fcs_schedule_updated', $schedule_id, $sanitized );
+		do_action( 'flex_cs_schedule_updated', $schedule_id, $sanitized );
 		$this->maybe_schedule_processing_event( (string) $sanitized['expiry_date'] );
 
 		return true;
@@ -131,13 +131,13 @@ class ScheduleManager {
 
 		if ( false === $result ) {
 			$this->last_error = new WP_Error(
-				'fcs_db_delete_failed',
+				'flex_cs_db_delete_failed',
 				! empty( $wpdb->last_error ) ? $wpdb->last_error : __( 'Database delete failed.', 'flex-content-scheduler' )
 			);
 			return false;
 		}
 
-		do_action( 'fcs_schedule_deleted', $schedule_id );
+		do_action( 'flex_cs_schedule_deleted', $schedule_id );
 		return true;
 	}
 
@@ -255,31 +255,31 @@ class ScheduleManager {
 
 		foreach ( $required as $field ) {
 			if ( empty( $data[ $field ] ) ) {
-				return new WP_Error( 'fcs_validation_error', sprintf( __( '%s is required.', 'flex-content-scheduler' ), $field ) );
+				return new WP_Error( 'flex_cs_validation_error', sprintf( __( '%s is required.', 'flex-content-scheduler' ), $field ) );
 			}
 		}
 
 		if ( ! get_post( (int) $data['post_id'] ) ) {
-			return new WP_Error( 'fcs_validation_error', __( 'Invalid post ID.', 'flex-content-scheduler' ) );
+			return new WP_Error( 'flex_cs_validation_error', __( 'Invalid post ID.', 'flex-content-scheduler' ) );
 		}
 
 		$dt = \DateTime::createFromFormat( 'Y-m-d H:i:s', (string) $data['expiry_date'], new \DateTimeZone( 'UTC' ) );
 		if ( ! $dt || $dt->format( 'Y-m-d H:i:s' ) !== $data['expiry_date'] ) {
-			return new WP_Error( 'fcs_validation_error', __( 'Invalid expiry date format.', 'flex-content-scheduler' ) );
+			return new WP_Error( 'flex_cs_validation_error', __( 'Invalid expiry date format.', 'flex-content-scheduler' ) );
 		}
 
-		$allowed_actions = apply_filters( 'fcs_expiry_actions', array( 'unpublish', 'delete', 'redirect', 'change_status' ) );
+		$allowed_actions = apply_filters( 'flex_cs_expiry_actions', array( 'unpublish', 'delete', 'redirect', 'change_status' ) );
 
 		if ( ! in_array( $data['expiry_action'], $allowed_actions, true ) ) {
-			return new WP_Error( 'fcs_validation_error', __( 'Invalid expiry action.', 'flex-content-scheduler' ) );
+			return new WP_Error( 'flex_cs_validation_error', __( 'Invalid expiry action.', 'flex-content-scheduler' ) );
 		}
 
 		if ( 'redirect' === $data['expiry_action'] && empty( $data['redirect_url'] ) ) {
-			return new WP_Error( 'fcs_validation_error', __( 'Redirect URL is required.', 'flex-content-scheduler' ) );
+			return new WP_Error( 'flex_cs_validation_error', __( 'Redirect URL is required.', 'flex-content-scheduler' ) );
 		}
 
 		if ( 'change_status' === $data['expiry_action'] && empty( $data['new_status'] ) ) {
-			return new WP_Error( 'fcs_validation_error', __( 'New status is required.', 'flex-content-scheduler' ) );
+			return new WP_Error( 'flex_cs_validation_error', __( 'New status is required.', 'flex-content-scheduler' ) );
 		}
 
 		return true;
@@ -327,7 +327,7 @@ class ScheduleManager {
 	}
 
 	private function maybe_schedule_processing_event( string $utc_expiry_date ): void {
-		$settings = get_option( 'fcs_settings', array() );
+		$settings = get_option( 'flex_cs_settings', array() );
 		if ( isset( $settings['cron_enabled'] ) && ! $settings['cron_enabled'] ) {
 			return;
 		}
@@ -341,6 +341,6 @@ class ScheduleManager {
 			$timestamp = time() + 5;
 		}
 
-		wp_schedule_single_event( $timestamp, 'fcs_process_schedules' );
+		wp_schedule_single_event( $timestamp, 'flex_cs_process_schedules' );
 	}
 }

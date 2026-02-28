@@ -4,12 +4,12 @@ namespace Anisur\ContentScheduler\Integrations\UncannyAutomator\Triggers;
 
 class ContentScheduledTrigger {
 	public function __construct() {
-		add_action( 'fcs_schedule_created', array( $this, 'handle' ), 10, 2 );
+		add_action( 'flex_cs_schedule_created', array( $this, 'handle' ), 10, 2 );
 	}
 
 	public function handle( int $schedule_id, array $data ): void {
 		do_action(
-			'fcs_automator_trigger',
+			'flex_cs_automator_trigger',
 			'FLEX_CS_CONTENT_SCHEDULED',
 			array(
 				'SCHEDULE_ID'   => $schedule_id,

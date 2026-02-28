@@ -16,7 +16,7 @@ export default function SettingsPanel() {
     setMessage('');
     try {
       const updated = await apiFetch({
-        path: '/fcs/v1/settings',
+        path: '/flex-cs/v1/settings',
         method: 'PUT',
         data: settings,
         headers: { 'X-WP-Nonce': window.flexCSAdmin?.nonce }
@@ -33,7 +33,7 @@ export default function SettingsPanel() {
   return (
     <section>
       <h2>Settings</h2>
-      <div className="fcs-settings">
+      <div className="flex-cs-settings">
         <label>
           Default action
           <select

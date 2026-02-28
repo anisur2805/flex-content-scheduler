@@ -95,8 +95,8 @@ class ScheduleManagerTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 		$GLOBALS['wpdb']                 = new FLEX_CS_WPDB_Stub();
-		$GLOBALS['fcs_actions_fired']   = array();
-		$GLOBALS['fcs_stub_post_exists'] = true;
+		$GLOBALS['flex_cs_actions_fired']   = array();
+		$GLOBALS['flex_cs_stub_post_exists'] = true;
 	}
 
 	private function valid_payload(): array {

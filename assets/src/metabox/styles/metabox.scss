@@ -1,32 +1,89 @@
-.fcs-metabox {
-  display: grid;
-  gap: 10px;
-}
+.flex-cs-metabox {
+	display: grid;
+	gap: 16px;
+	padding: 4px;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 
-.fcs-metabox label {
-  display: grid;
-  gap: 4px;
-  font-weight: 600;
-}
+	label {
+		display: grid;
+		gap: 6px;
+		font-weight: 500;
+		color: #1d2327;
+		font-size: 13px;
 
-.fcs-metabox input,
-.fcs-metabox select {
-  width: 100%;
-}
+		input[type="datetime-local"],
+		input[type="url"],
+		select {
+			padding: 6px 8px;
+			border: 1px solid #8c8f94;
+			border-radius: 4px;
+			background-color: #fff;
+			font-size: 14px;
+			line-height: 1.4;
+			color: #2c3338;
+			transition: border-color 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
+			width: 100%;
 
-.fcs-actions {
-  display: flex;
-  gap: 8px;
-}
+			&:focus {
+				border-color: #2271b1;
+				box-shadow: 0 0 0 1px #2271b1;
+				outline: 2px solid transparent;
+			}
+		}
+	}
 
-.fcs-countdown {
-  font-weight: 600;
-}
+	.flex-cs-actions {
+		display: flex;
+		gap: 12px;
+		margin-top: 4px;
+		align-items: center;
 
-.fcs-message.success {
-  color: #007017;
-}
+		.button-primary {
+			background: #2271b1;
+			border-color: #2271b1;
+			color: #fff;
+			text-decoration: none;
+			text-shadow: none;
 
-.fcs-message.error {
-  color: #b00020;
+			&:hover {
+				background: #135e96;
+				border-color: #135e96;
+			}
+
+			&:disabled {
+				background: #72aee6;
+				border-color: #72aee6;
+				opacity: 0.7;
+			}
+		}
+	}
+
+	.flex-cs-countdown {
+		font-size: 12px;
+		color: #646970;
+		background: #f0f0f1;
+		padding: 6px 10px;
+		border-radius: 4px;
+		border-left: 3px solid #2271b1;
+		margin-bottom: 4px;
+	}
+
+	.flex-cs-message {
+		padding: 8px 12px;
+		border-radius: 4px;
+		font-size: 13px;
+		margin: 0;
+
+		&.success {
+			background-color: #edfaef;
+			color: #007017;
+			border-left: 4px solid #00a32a;
+		}
+
+		&.error {
+			background-color: #fcf0f1;
+			color: #b00020;
+			border-left: 4px solid #d63638;
+		}
+	}
 }

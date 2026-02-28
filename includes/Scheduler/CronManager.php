@@ -7,7 +7,7 @@ use Anisur\ContentScheduler\Loader;
 class CronManager {
 	private ScheduleManager $schedule_manager;
 	private ExpiryActions $expiry_actions;
-	private string $runtime_lock_option = 'fcs_last_runtime_process';
+	private string $runtime_lock_option = 'flex_cs_last_runtime_process';
 
 	public function __construct( ScheduleManager $schedule_manager, ExpiryActions $expiry_actions ) {
 		$this->schedule_manager = $schedule_manager;
@@ -16,7 +16,7 @@ class CronManager {
 
 	public function register_hooks( Loader $loader ): void {
 		$loader->add_filter( 'cron_schedules', $this, 'register_custom_interval' );
-		$loader->add_action( 'fcs_process_schedules', $this, 'process_due_schedules', 10, 0 );
+		$loader->add_action( 'flex_cs_process_schedules', $this, 'process_due_schedules', 10, 0 );
 		$loader->add_action( 'init', $this, 'ensure_cron_event_scheduled', 20, 0 );
 		$loader->add_action( 'init', $this, 'maybe_process_due_schedules_runtime', 30, 0 );
 	}
@@ -31,9 +31,9 @@ class CronManager {
 	}
 
 	public function process_due_schedules(): void {
-		$settings = get_option( 'fcs_settings', array() );
+		$settings = get_option( 'flex_cs_settings', array() );
 		if ( isset( $settings['cron_enabled'] ) && ! $settings['cron_enabled'] ) {
-			do_action( 'fcs_cron_processed', 0 );
+			do_action( 'flex_cs_cron_processed', 0 );
 			return;
 		}
 
@@ -50,22 +50,22 @@ class CronManager {
 			}
 
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-				error_log( sprintf( '[FCS] Failed processing schedule ID %d', (int) $schedule->id ) );
+				error_log( sprintf( '[FLEX_CS] Failed processing schedule ID %d', (int) $schedule->id ) );
 			}
 		}
 
-		do_action( 'fcs_cron_processed', $processed_count );
+		do_action( 'flex_cs_cron_processed', $processed_count );
 	}
 
 	public function ensure_cron_event_scheduled(): void {
-		$settings = get_option( 'fcs_settings', array() );
+		$settings = get_option( 'flex_cs_settings', array() );
 		if ( isset( $settings['cron_enabled'] ) && ! $settings['cron_enabled'] ) {
-			wp_clear_scheduled_hook( 'fcs_process_schedules' );
+			wp_clear_scheduled_hook( 'flex_cs_process_schedules' );
 			return;
 		}
 
-		if ( ! wp_next_scheduled( 'fcs_process_schedules' ) ) {
-			wp_schedule_event( time() + 60, 'every_minute', 'fcs_process_schedules' );
+		if ( ! wp_next_scheduled( 'flex_cs_process_schedules' ) ) {
+			wp_schedule_event( time() + 60, 'every_minute', 'flex_cs_process_schedules' );
 		}
 	}
 
@@ -74,7 +74,7 @@ class CronManager {
 			return;
 		}
 
-		$settings = get_option( 'fcs_settings', array() );
+		$settings = get_option( 'flex_cs_settings', array() );
 		if ( isset( $settings['cron_enabled'] ) && ! $settings['cron_enabled'] ) {
 			return;
 		}

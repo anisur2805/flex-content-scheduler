@@ -6,9 +6,9 @@ use PHPUnit\Framework\TestCase;
 class ExpiryActionsTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
-		$GLOBALS['fcs_actions_fired'] = array();
-		$GLOBALS['fcs_stub_post_exists'] = true;
-		$GLOBALS['fcs_deleted_meta'] = array();
+		$GLOBALS['flex_cs_actions_fired'] = array();
+		$GLOBALS['flex_cs_stub_post_exists'] = true;
+		$GLOBALS['flex_cs_deleted_meta'] = array();
 	}
 
 	public function test_process_calls_unpublish_when_action_is_unpublish(): void {
@@ -21,7 +21,7 @@ class ExpiryActionsTest extends TestCase {
 		);
 
 		$this->assertTrue( $result );
-		$this->assertSame( '_fcs_redirect_url', $GLOBALS['fcs_deleted_meta'][0]['meta_key'] );
+		$this->assertSame( '_flex_cs_redirect_url', $GLOBALS['flex_cs_deleted_meta'][0]['meta_key'] );
 	}
 
 	public function test_process_calls_delete_when_action_is_delete(): void {
@@ -70,7 +70,7 @@ class ExpiryActionsTest extends TestCase {
 		);
 
 		$this->assertTrue( $result );
-		$this->assertSame( '_fcs_redirect_url', $GLOBALS['fcs_deleted_meta'][0]['meta_key'] );
+		$this->assertSame( '_flex_cs_redirect_url', $GLOBALS['flex_cs_deleted_meta'][0]['meta_key'] );
 	}
 
 	public function test_process_returns_false_on_invalid_post_id(): void {
@@ -96,8 +96,8 @@ class ExpiryActionsTest extends TestCase {
 			)
 		);
 
-		$hooks = array_column( $GLOBALS['fcs_actions_fired'], 'hook' );
-		$this->assertContains( 'fcs_before_expiry_action', $hooks );
-		$this->assertContains( 'fcs_after_expiry_action', $hooks );
+		$hooks = array_column( $GLOBALS['flex_cs_actions_fired'], 'hook' );
+		$this->assertContains( 'flex_cs_before_expiry_action', $hooks );
+		$this->assertContains( 'flex_cs_after_expiry_action', $hooks );
 	}
 }

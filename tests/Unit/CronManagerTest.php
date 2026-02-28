@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 class CronManagerTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
-		$GLOBALS['fcs_actions_fired'] = array();
+		$GLOBALS['flex_cs_actions_fired'] = array();
 	}
 
 	public function test_custom_interval_is_registered(): void {
@@ -39,7 +39,7 @@ class CronManagerTest extends TestCase {
 		$manager = new CronManager( $schedule_manager, $expiry_actions );
 		$manager->process_due_schedules();
 
-		$this->assertSame( 'fcs_cron_processed', end( $GLOBALS['fcs_actions_fired'] )['hook'] );
+		$this->assertSame( 'flex_cs_cron_processed', end( $GLOBALS['flex_cs_actions_fired'] )['hook'] );
 	}
 
 	public function test_process_due_schedules_marks_item_as_processed_on_success(): void {

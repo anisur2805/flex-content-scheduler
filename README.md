@@ -24,7 +24,7 @@ Schedule post expiry with flexible rules - unpublish, delete, redirect, or chang
 - Visit the plugin admin page to review all schedules.
 
 ## REST API Reference
-Base: `/wp-json/fcs/v1`
+Base: `/wp-json/flex-cs/v1`
 - `GET /schedules`
 - `POST /schedules`
 - `GET /schedules/{id}`
@@ -33,17 +33,17 @@ Base: `/wp-json/fcs/v1`
 - `GET /schedules/post/{post_id}`
 
 ## Hooks & Filters Reference
-- `fcs_schedule_created`
-- `fcs_schedule_updated`
-- `fcs_schedule_deleted`
-- `fcs_before_expiry_action`
-- `fcs_after_expiry_action`
-- `fcs_cron_processed`
-- `fcs_schedule_data_before_insert`
-- `fcs_expiry_actions`
+- `flex_cs_schedule_created`
+- `flex_cs_schedule_updated`
+- `flex_cs_schedule_deleted`
+- `flex_cs_before_expiry_action`
+- `flex_cs_after_expiry_action`
+- `flex_cs_cron_processed`
+- `flex_cs_schedule_data_before_insert`
+- `flex_cs_expiry_actions`
 
 ## Uncanny Automator Integration
-Provides 2 triggers and 2 actions under integration code `FCS`.
+Provides 2 triggers and 2 actions under integration code `FLEX_CS`.
 
 ## Development Setup
 - PHP dependencies: `composer install`
