@@ -12,39 +12,44 @@
  * Domain Path:       /languages
  * Requires at least: 6.0
  * Requires PHP:      7.4
+ *
+ * @package Flex_Content_Scheduler
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-    exit;
+	exit;
 }
 
 if ( isset( $_SERVER['REQUEST_URI'] ) ) {
-    $fcs_request_uri = (string) $_SERVER['REQUEST_URI'];
-    if (
-        false !== strpos( $fcs_request_uri, '/wp-json/fcs/' ) ||
-        false !== strpos( $fcs_request_uri, 'rest_route=/fcs/' ) ||
-        false !== strpos( $fcs_request_uri, 'rest_route=%2Ffcs%2F' )
-    ) {
-        @ini_set( 'display_errors', '0' );
-    }
+	$flex_cs_request_uri = (string) $_SERVER['REQUEST_URI'];
+	if (
+		false !== strpos( $flex_cs_request_uri, '/wp-json/fcs/' ) ||
+		false !== strpos( $flex_cs_request_uri, 'rest_route=/fcs/' ) ||
+		false !== strpos( $flex_cs_request_uri, 'rest_route=%2Ffcs%2F' )
+	) {
+		@ini_set( 'display_errors', '0' ); // phpcs:ignore WordPress.PHP.IniSet.display_errors_Disallowed
+	}
 }
 
-define( 'FCS_VERSION', '1.0.0' );
-define( 'FCS_PLUGIN_FILE', __FILE__ );
-define( 'FCS_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-define( 'FCS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'FCS_PLUGIN_SLUG', 'flex-content-scheduler' );
+define( 'FLEX_CS_VERSION', '1.0.0' );
+define( 'FLEX_CS_PLUGIN_FILE', __FILE__ );
+define( 'FLEX_CS_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'FLEX_CS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'FLEX_CS_PLUGIN_SLUG', 'flex-content-scheduler' );
 
-if ( file_exists( FCS_PLUGIN_DIR . 'vendor/autoload.php' ) ) {
-    require_once FCS_PLUGIN_DIR . 'vendor/autoload.php';
+if ( file_exists( FLEX_CS_PLUGIN_DIR . 'vendor/autoload.php' ) ) {
+	require_once FLEX_CS_PLUGIN_DIR . 'vendor/autoload.php';
 }
 
 register_activation_hook( __FILE__, array( 'Anisur\\ContentScheduler\\Activator', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'Anisur\\ContentScheduler\\Deactivator', 'deactivate' ) );
 
-function fcs_run() {
-    $plugin = new \Anisur\ContentScheduler\Plugin();
-    $plugin->run();
+/**
+ * Run the plugin.
+ */
+function flex_cs_run() {
+	$plugin = new \Anisur\ContentScheduler\Plugin();
+	$plugin->run();
 }
 
-fcs_run();
+flex_cs_run();

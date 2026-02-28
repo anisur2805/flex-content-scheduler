@@ -9,24 +9,24 @@ use Anisur\ContentScheduler\Integrations\UncannyAutomator\Triggers\ContentSchedu
 use Anisur\ContentScheduler\Scheduler\ExpiryActions;
 
 class AutomatorIntegration {
-    private ?ExpiryActions $expiry_actions = null;
+	private ?ExpiryActions $expiry_actions = null;
 
-    public function __construct( ExpiryActions $expiry_actions ) {
-        if ( ! class_exists( 'Uncanny_Automator\\Automator_Load' ) ) {
-            return;
-        }
+	public function __construct( ExpiryActions $expiry_actions ) {
+		if ( ! class_exists( 'Uncanny_Automator\\Automator_Load' ) ) {
+			return;
+		}
 
-        $this->expiry_actions = $expiry_actions;
-    }
+		$this->expiry_actions = $expiry_actions;
+	}
 
-    public function register(): void {
-        if ( null === $this->expiry_actions || ! class_exists( 'Uncanny_Automator\\Automator_Load' ) ) {
-            return;
-        }
+	public function register(): void {
+		if ( null === $this->expiry_actions || ! class_exists( 'Uncanny_Automator\\Automator_Load' ) ) {
+			return;
+		}
 
-        new ContentExpiredTrigger();
-        new ContentScheduledTrigger();
-        new UnpublishPostAction( $this->expiry_actions );
-        new RedirectPostAction( $this->expiry_actions );
-    }
+		new ContentExpiredTrigger();
+		new ContentScheduledTrigger();
+		new UnpublishPostAction( $this->expiry_actions );
+		new RedirectPostAction( $this->expiry_actions );
+	}
 }
