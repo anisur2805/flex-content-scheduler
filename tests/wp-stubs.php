@@ -151,6 +151,7 @@ $GLOBALS['flex_cs_is_singular']       = true;
 $GLOBALS['flex_cs_queried_object_id'] = 0;
 $GLOBALS['flex_cs_post_meta']         = array();
 $GLOBALS['flex_cs_sent_emails']       = array();
+$GLOBALS['flex_cs_sticky_posts']      = array();
 
 if ( ! function_exists( '__' ) ) {
 	function __( string $text, string $domain = '' ): string {
@@ -608,6 +609,27 @@ if ( ! function_exists( 'get_the_title' ) ) {
 if ( ! function_exists( 'get_post_type' ) ) {
 	function get_post_type( int $post_id ): string {
 		return 'post';
+	}
+}
+
+if ( ! function_exists( 'stick_post' ) ) {
+	function stick_post( int $post_id ): void {
+		if ( ! in_array( $post_id, $GLOBALS['flex_cs_sticky_posts'], true ) ) {
+			$GLOBALS['flex_cs_sticky_posts'][] = $post_id;
+		}
+	}
+}
+
+if ( ! function_exists( 'unstick_post' ) ) {
+	function unstick_post( int $post_id ): void {
+		$GLOBALS['flex_cs_sticky_posts'] = array_values(
+			array_filter(
+				$GLOBALS['flex_cs_sticky_posts'],
+				static function ( int $sticky_post_id ) use ( $post_id ) {
+					return $sticky_post_id !== $post_id;
+				}
+			)
+		);
 	}
 }
 

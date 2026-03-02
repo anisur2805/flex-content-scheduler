@@ -305,6 +305,8 @@ class MetaBox {
 							<option value="delete"><?php echo esc_html__( 'Delete', 'flex-content-scheduler' ); ?></option>
 							<option value="redirect"><?php echo esc_html__( 'Redirect', 'flex-content-scheduler' ); ?></option>
 							<option value="change_status"><?php echo esc_html__( 'Change status', 'flex-content-scheduler' ); ?></option>
+							<option value="sticky"><?php echo esc_html__( 'Sticky', 'flex-content-scheduler' ); ?></option>
+							<option value="unsticky"><?php echo esc_html__( 'Unsticky', 'flex-content-scheduler' ); ?></option>
 						</select>
 					</span>
 				</label>

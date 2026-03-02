@@ -63,6 +63,12 @@ class ExpiryActions {
 			case 'change_status':
 				$result = $this->change_status( $post_id, (string) ( $schedule->new_status ?? 'draft' ) );
 				break;
+			case 'sticky':
+				$result = $this->sticky( $post_id );
+				break;
+			case 'unsticky':
+				$result = $this->unsticky( $post_id );
+				break;
 		}
 
 		/**
@@ -177,6 +183,48 @@ class ExpiryActions {
 		delete_post_meta( $post_id, '_flex_cs_redirect_url' );
 
 		return ! is_wp_error( $result );
+	}
+
+	/**
+	 * Make a post sticky.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int $post_id Post ID.
+	 * @return bool True on success, false on failure.
+	 */
+	public function sticky( int $post_id ): bool {
+		$result = wp_update_post(
+			array(
+				'ID'          => $post_id,
+				'post_status' => 'publish',
+			),
+			true
+		);
+
+		if ( is_wp_error( $result ) ) {
+			return false;
+		}
+
+		stick_post( $post_id );
+		delete_post_meta( $post_id, '_flex_cs_redirect_url' );
+
+		return true;
+	}
+
+	/**
+	 * Remove sticky status from a post.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int $post_id Post ID.
+	 * @return bool True on success, false on failure.
+	 */
+	public function unsticky( int $post_id ): bool {
+		unstick_post( $post_id );
+		delete_post_meta( $post_id, '_flex_cs_redirect_url' );
+
+		return true;
 	}
 
 	/**

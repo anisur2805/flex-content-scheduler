@@ -30,7 +30,7 @@ class MigrationManager {
 	 * @since 1.0.0
 	 * @var string
 	 */
-	private string $target_version = '1.0.0';
+	private string $target_version = '1.1.0';
 
 	/**
 	 * Run pending migrations.
@@ -42,7 +42,7 @@ class MigrationManager {
 	public function migrate(): void {
 		$current_version = (string) get_option( $this->db_version_option, '0.0.0' );
 
-		if ( version_compare( $current_version, '1.0.0', '<' ) ) {
+		if ( version_compare( $current_version, '1.1.0', '<' ) ) {
 			$table = new ScheduleTable();
 			$table->create_table();
 		}
