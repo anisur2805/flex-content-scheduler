@@ -83,4 +83,48 @@ class MetaBoxTest extends TestCase {
 		$this->assertSame( 'delete', $manager->calls[0]['method'] );
 		$this->assertSame( 88, $manager->calls[0]['id'] );
 	}
+
+	public function test_save_inline_edit_data_creates_schedule_when_none_exists(): void {
+		$manager = new MetaBoxScheduleManagerStub();
+		$box     = new MetaBox( $manager );
+
+		$_POST['flex_cs_inline_nonce']        = 'valid-nonce';
+		$_POST['flex_cs_inline_expiry_action'] = 'unpublish';
+		$_POST['flex_cs_inline_expiry_date']   = '2026-03-03T10:00';
+
+		$box->save_inline_edit_data( 15 );
+
+		$this->assertSame( 'create', $manager->calls[0]['method'] );
+		$this->assertSame( 15, $manager->calls[0]['data']['post_id'] );
+	}
+
+	public function test_save_inline_edit_data_updates_existing_schedule(): void {
+		$manager = new MetaBoxScheduleManagerStub();
+		$manager->existing = (object) array( 'id' => 42 );
+		$box = new MetaBox( $manager );
+
+		$_POST['flex_cs_inline_nonce']         = 'valid-nonce';
+		$_POST['flex_cs_inline_expiry_action'] = 'change_status';
+		$_POST['flex_cs_inline_expiry_date']   = '2026-03-03T10:00';
+		$_POST['flex_cs_inline_new_status']    = 'private';
+
+		$box->save_inline_edit_data( 15 );
+
+		$this->assertSame( 'update', $manager->calls[0]['method'] );
+		$this->assertSame( 42, $manager->calls[0]['id'] );
+	}
+
+	public function test_save_inline_edit_data_deletes_schedule_when_requested(): void {
+		$manager = new MetaBoxScheduleManagerStub();
+		$manager->existing = (object) array( 'id' => 52 );
+		$box = new MetaBox( $manager );
+
+		$_POST['flex_cs_inline_nonce'] = 'valid-nonce';
+		$_POST['flex_cs_inline_remove'] = '1';
+
+		$box->save_inline_edit_data( 15 );
+
+		$this->assertSame( 'delete', $manager->calls[0]['method'] );
+		$this->assertSame( 52, $manager->calls[0]['id'] );
+	}
 }
