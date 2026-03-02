@@ -126,6 +126,7 @@ class CronManager {
 
 				if ( $result ) {
 					$this->schedule_manager->mark_processed( (int) $schedule->id );
+					$this->maybe_send_expiry_notification( $schedule );
 					$processed_count++;
 					continue;
 				}
@@ -199,5 +200,94 @@ class CronManager {
 
 		update_option( $this->runtime_lock_option, time(), false );
 		$this->process_due_schedules();
+	}
+
+	/**
+	 * Send expiry notification email for a processed schedule when enabled.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param object $schedule Processed schedule object.
+	 * @return void
+	 */
+	private function maybe_send_expiry_notification( object $schedule ): void {
+		$settings = get_option( 'flex_cs_settings', array() );
+		$to       = sanitize_email( (string) ( $settings['notification_email'] ?? '' ) );
+
+		if ( '' === $to ) {
+			return;
+		}
+
+		$post_id     = isset( $schedule->post_id ) ? (int) $schedule->post_id : 0;
+		$post_title  = $post_id > 0 ? get_the_title( $post_id ) : __( 'Unknown content', 'flex-content-scheduler' );
+		$action      = isset( $schedule->expiry_action ) ? sanitize_key( (string) $schedule->expiry_action ) : '';
+		$expiry_date = isset( $schedule->expiry_date ) ? sanitize_text_field( (string) $schedule->expiry_date ) : '';
+
+		/* translators: %s: post title. */
+		$subject = sprintf( __( 'Content expiry processed: %s', 'flex-content-scheduler' ), $post_title );
+
+		/**
+		 * Filter notification email subject for processed schedules.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param string $subject  Email subject.
+		 * @param object $schedule Schedule object.
+		 * @param int    $post_id  Post ID.
+		 * @param string $action   Processed action.
+		 */
+		$subject = (string) apply_filters( 'flex_cs_notification_email_subject', $subject, $schedule, $post_id, $action );
+
+		$message = implode(
+			"\n",
+			array(
+				__( 'A content expiry action has been processed.', 'flex-content-scheduler' ),
+				/* translators: %d: post ID. */
+				sprintf( __( 'Post ID: %d', 'flex-content-scheduler' ), $post_id ),
+				/* translators: %s: post title. */
+				sprintf( __( 'Post Title: %s', 'flex-content-scheduler' ), $post_title ),
+				/* translators: %s: processed expiry action name. */
+				sprintf( __( 'Action: %s', 'flex-content-scheduler' ), $action ),
+				/* translators: %s: expiry date/time in UTC. */
+				sprintf( __( 'Expiry Date (UTC): %s', 'flex-content-scheduler' ), $expiry_date ),
+			)
+		);
+
+		/**
+		 * Filter notification email message for processed schedules.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param string $message  Email message.
+		 * @param object $schedule Schedule object.
+		 * @param int    $post_id  Post ID.
+		 * @param string $action   Processed action.
+		 */
+		$message = (string) apply_filters( 'flex_cs_notification_email_message', $message, $schedule, $post_id, $action );
+
+		$headers = array( 'Content-Type: text/plain; charset=UTF-8' );
+
+		/**
+		 * Filter notification email headers for processed schedules.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array<int, string> $headers  Email headers.
+		 * @param object             $schedule Schedule object.
+		 */
+		$headers = (array) apply_filters( 'flex_cs_notification_email_headers', $headers, $schedule );
+
+		wp_mail( $to, $subject, $message, $headers );
+
+		/**
+		 * Fires after a notification email is sent for a processed schedule.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param string $to       Recipient email.
+		 * @param string $subject  Email subject.
+		 * @param object $schedule Schedule object.
+		 */
+		do_action( 'flex_cs_notification_email_sent', $to, $subject, $schedule );
 	}
 }
