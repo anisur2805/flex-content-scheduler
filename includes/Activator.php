@@ -1,18 +1,46 @@
 <?php
+/**
+ * Plugin activation handler.
+ *
+ * @package Flex_Content_Scheduler
+ * @since   1.0.0
+ */
 
 namespace Anisur\ContentScheduler;
 
 use Anisur\ContentScheduler\Database\ScheduleTable;
 
+/**
+ * Class Activator
+ *
+ * Handles plugin activation tasks: database setup, cron scheduling, and default options.
+ *
+ * @since 1.0.0
+ */
 class Activator {
-	public static function add_every_minute_schedule( array $schedules ): array {
-		$schedules['every_minute'] = array(
-			'interval' => 60,
-			'display'  => __( 'Every Minute', 'flex-content-scheduler' ),
+	/**
+	 * Add custom cron interval for every minute.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $schedules Existing cron schedules.
+	 * @return array Modified schedules.
+	 */
+	public static function add_every_5_minutes_schedule( array $schedules ): array {
+		$schedules['every_5_minutes'] = array(
+			'interval' => 300,
+			'display'  => __( 'Every 5 Minutes', 'flex-content-scheduler' ),
 		);
 		return $schedules;
 	}
 
+	/**
+	 * Run plugin activation tasks.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
 	public static function activate(): void {
 		global $wp_version;
 
@@ -24,11 +52,11 @@ class Activator {
 		$table = new ScheduleTable();
 		$table->create_table();
 
-		add_filter( 'cron_schedules', array( __CLASS__, 'add_every_minute_schedule' ) );
+		add_filter( 'cron_schedules', array( __CLASS__, 'add_every_5_minutes_schedule' ) );
 		if ( ! wp_next_scheduled( 'flex_cs_process_schedules' ) ) {
-			wp_schedule_event( time(), 'every_minute', 'flex_cs_process_schedules' );
+			wp_schedule_event( time(), 'every_5_minutes', 'flex_cs_process_schedules' );
 		}
-		remove_filter( 'cron_schedules', array( __CLASS__, 'add_every_minute_schedule' ) );
+		remove_filter( 'cron_schedules', array( __CLASS__, 'add_every_5_minutes_schedule' ) );
 
 		flush_rewrite_rules();
 		update_option( 'flex_cs_version', FLEX_CS_VERSION );
@@ -39,6 +67,7 @@ class Activator {
 					'default_action'     => 'unpublish',
 					'cron_enabled'       => true,
 					'notification_email' => '',
+					'allowed_redirect_hosts' => array(),
 				)
 			);
 		}

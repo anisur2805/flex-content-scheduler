@@ -1,8 +1,28 @@
 <?php
+/**
+ * Custom database table for content schedules.
+ *
+ * @package Flex_Content_Scheduler
+ * @since   1.0.0
+ */
 
 namespace Anisur\ContentScheduler\Database;
 
+/**
+ * Class ScheduleTable
+ *
+ * Manages creation and removal of the custom wp_content_schedules database table.
+ *
+ * @since 1.0.0
+ */
 class ScheduleTable {
+	/**
+	 * Create the schedules database table using dbDelta.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
 	public function create_table(): void {
 		global $wpdb;
 
@@ -30,18 +50,32 @@ class ScheduleTable {
 		dbDelta( $sql );
 	}
 
+	/**
+	 * Get the full table name including the WordPress prefix.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Table name.
+	 */
 	public static function get_table_name(): string {
 		global $wpdb;
 		return $wpdb->prefix . 'content_schedules';
 	}
 
+	/**
+	 * Drop the schedules database table.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
 	public function drop_table(): void {
 		global $wpdb;
 
-		$table_name = self::get_table_name();
+		$table_name      = self::get_table_name();
 		$safe_table_name = preg_replace( '/[^a-zA-Z0-9_]/', '', $table_name );
 		if ( ! empty( $safe_table_name ) ) {
-			$wpdb->query( "DROP TABLE IF EXISTS `{$safe_table_name}`" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			$wpdb->query( "DROP TABLE IF EXISTS `{$safe_table_name}`" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		}
 	}
 }

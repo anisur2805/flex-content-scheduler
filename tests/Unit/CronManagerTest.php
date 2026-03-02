@@ -15,8 +15,8 @@ class CronManagerTest extends TestCase {
 		$manager   = new CronManager( $this->createMock( ScheduleManager::class ), $this->createMock( ExpiryActions::class ) );
 		$schedules = $manager->register_custom_interval( array() );
 
-		$this->assertArrayHasKey( 'every_minute', $schedules );
-		$this->assertSame( 60, $schedules['every_minute']['interval'] );
+		$this->assertArrayHasKey( 'every_5_minutes', $schedules );
+		$this->assertSame( 300, $schedules['every_5_minutes']['interval'] );
 	}
 
 	public function test_process_due_schedules_calls_expiry_actions_for_each_due_item(): void {
@@ -24,9 +24,9 @@ class CronManagerTest extends TestCase {
 		$schedule_two = (object) array( 'id' => 2 );
 
 		$schedule_manager = $this->createMock( ScheduleManager::class );
-		$schedule_manager->expects( $this->once() )
+		$schedule_manager->expects( $this->exactly( 2 ) )
 			->method( 'get_due_schedules' )
-			->willReturn( array( $schedule_one, $schedule_two ) );
+			->willReturnOnConsecutiveCalls( array( $schedule_one, $schedule_two ), array() );
 		$schedule_manager->expects( $this->exactly( 2 ) )
 			->method( 'mark_processed' )
 			->willReturn( true );
@@ -46,7 +46,8 @@ class CronManagerTest extends TestCase {
 		$schedule = (object) array( 'id' => 42 );
 
 		$schedule_manager = $this->createMock( ScheduleManager::class );
-		$schedule_manager->method( 'get_due_schedules' )->willReturn( array( $schedule ) );
+		$schedule_manager->method( 'get_due_schedules' )
+			->willReturnOnConsecutiveCalls( array( $schedule ), array() );
 		$schedule_manager->expects( $this->once() )
 			->method( 'mark_processed' )
 			->with( 42 )
@@ -63,7 +64,8 @@ class CronManagerTest extends TestCase {
 		$schedule = (object) array( 'id' => 42 );
 
 		$schedule_manager = $this->createMock( ScheduleManager::class );
-		$schedule_manager->method( 'get_due_schedules' )->willReturn( array( $schedule ) );
+		$schedule_manager->method( 'get_due_schedules' )
+			->willReturnOnConsecutiveCalls( array( $schedule ), array() );
 		$schedule_manager->expects( $this->never() )->method( 'mark_processed' );
 
 		$expiry_actions = $this->createMock( ExpiryActions::class );

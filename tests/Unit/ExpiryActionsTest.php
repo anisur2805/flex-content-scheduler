@@ -3,12 +3,25 @@
 use Anisur\ContentScheduler\Scheduler\ExpiryActions;
 use PHPUnit\Framework\TestCase;
 
+class ExpiryActionsRedirectTestDouble extends ExpiryActions {
+	public string $redirected_to = '';
+
+	protected function perform_redirect( string $redirect_url ): void {
+		$this->redirected_to = $redirect_url;
+	}
+}
+
 class ExpiryActionsTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 		$GLOBALS['flex_cs_actions_fired'] = array();
 		$GLOBALS['flex_cs_stub_post_exists'] = true;
 		$GLOBALS['flex_cs_deleted_meta'] = array();
+		$GLOBALS['flex_cs_is_admin'] = false;
+		$GLOBALS['flex_cs_is_singular'] = true;
+		$GLOBALS['flex_cs_queried_object_id'] = 0;
+		$GLOBALS['flex_cs_post_meta'] = array();
+		$GLOBALS['flex_cs_options']['flex_cs_settings']['allowed_redirect_hosts'] = array();
 	}
 
 	public function test_process_calls_unpublish_when_action_is_unpublish(): void {
@@ -99,5 +112,29 @@ class ExpiryActionsTest extends TestCase {
 		$hooks = array_column( $GLOBALS['flex_cs_actions_fired'], 'hook' );
 		$this->assertContains( 'flex_cs_before_expiry_action', $hooks );
 		$this->assertContains( 'flex_cs_after_expiry_action', $hooks );
+	}
+
+	public function test_handle_template_redirect_redirects_when_host_is_allowed(): void {
+		$actions = new ExpiryActionsRedirectTestDouble();
+
+		$GLOBALS['flex_cs_queried_object_id'] = 12;
+		$GLOBALS['flex_cs_post_meta'][12]['_flex_cs_redirect_url'] = 'https://example.com/target';
+		$GLOBALS['flex_cs_options']['flex_cs_settings']['allowed_redirect_hosts'] = array( 'example.com' );
+
+		$actions->handle_template_redirect();
+
+		$this->assertSame( 'https://example.com/target', $actions->redirected_to );
+	}
+
+	public function test_handle_template_redirect_skips_when_host_not_allowed(): void {
+		$actions = new ExpiryActionsRedirectTestDouble();
+
+		$GLOBALS['flex_cs_queried_object_id'] = 12;
+		$GLOBALS['flex_cs_post_meta'][12]['_flex_cs_redirect_url'] = 'https://blocked.test/target';
+		$GLOBALS['flex_cs_options']['flex_cs_settings']['allowed_redirect_hosts'] = array( 'example.com' );
+
+		$actions->handle_template_redirect();
+
+		$this->assertSame( '', $actions->redirected_to );
 	}
 }

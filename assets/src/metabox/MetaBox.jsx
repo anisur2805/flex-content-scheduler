@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
+import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
 
+/** @type {{ expiry_date: string, expiry_action: string, redirect_url: string, new_status: string }} */
 const initialState = {
   expiry_date: '',
   expiry_action: 'unpublish',
@@ -7,6 +10,14 @@ const initialState = {
   new_status: 'draft'
 };
 
+/**
+ * Convert a UTC date string to a local datetime-local input value.
+ *
+ * @since 1.0.0
+ *
+ * @param {string} utcDate UTC date string (Y-m-d H:i:s).
+ * @return {string} Local datetime string for input[type=datetime-local].
+ */
 function toLocalInput(utcDate) {
   if (!utcDate) return '';
   const d = new Date(utcDate.replace(' ', 'T') + 'Z');
@@ -14,6 +25,14 @@ function toLocalInput(utcDate) {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
+/**
+ * Convert a local datetime-local input value to a UTC datetime string.
+ *
+ * @since 1.0.0
+ *
+ * @param {string} localValue Local datetime string from input.
+ * @return {string} UTC datetime string (Y-m-d H:i:s).
+ */
 function toUtcString(localValue) {
   if (!localValue) return '';
   const d = new Date(localValue);
@@ -21,67 +40,13 @@ function toUtcString(localValue) {
   return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:00`;
 }
 
-function parsePossiblyPollutedJson(rawText) {
-  const text = String(rawText || '').trim();
-
-  if (!text) return null;
-  if (text === 'null') return null;
-
-  try {
-    return JSON.parse(text);
-  } catch (e) {
-    // Continue to fallback extraction for hosts that leak warnings before JSON.
-  }
-
-  const candidates = [];
-  const firstObject = text.indexOf('{');
-  const lastObject = text.lastIndexOf('}');
-  if (firstObject !== -1 && lastObject > firstObject) {
-    candidates.push(text.slice(firstObject, lastObject + 1));
-  }
-
-  const firstArray = text.indexOf('[');
-  const lastArray = text.lastIndexOf(']');
-  if (firstArray !== -1 && lastArray > firstArray) {
-    candidates.push(text.slice(firstArray, lastArray + 1));
-  }
-
-  for (const candidate of candidates) {
-    try {
-      return JSON.parse(candidate);
-    } catch (e) {
-      // Try the next candidate.
-    }
-  }
-
-  throw new Error('The response is not a valid JSON response.');
-}
-
-async function request(endpoint, { method = 'GET', data } = {}) {
-  const base = (window.flexCSMetabox?.restUrl || '').replace(/\/$/, '');
-  const url = `${base}${endpoint}`;
-
-  const response = await fetch(url, {
-    method,
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-WP-Nonce': window.flexCSMetabox?.nonce || ''
-    },
-    body: data ? JSON.stringify(data) : undefined
-  });
-
-  const raw = await response.text();
-  const parsed = parsePossiblyPollutedJson(raw);
-
-  if (!response.ok) {
-    const message = parsed?.message || `Request failed (${response.status})`;
-    throw new Error(message);
-  }
-
-  return parsed;
-}
-
+/**
+ * MetaBox component for managing content expiry schedules on post edit screens.
+ *
+ * @since 1.0.0
+ *
+ * @return {JSX.Element} MetaBox UI.
+ */
 export default function MetaBox() {
   const [schedule, setSchedule] = useState(initialState);
   const [existing, setExisting] = useState(null);
@@ -94,7 +59,10 @@ export default function MetaBox() {
   useEffect(() => {
     if (!postId) return;
     setLoading(true);
-    request(`/schedules/post/${postId}`)
+    apiFetch({
+      path: `/flex-cs/v1/schedules/post/${postId}`,
+      headers: { 'X-WP-Nonce': window.flexCSMetabox?.nonce || '' }
+    })
       .then((res) => {
         if (res?.id) {
           setExisting(res);
@@ -116,10 +84,11 @@ export default function MetaBox() {
   const countdown = useMemo(() => {
     if (!existing?.expiry_date) return null;
     const delta = new Date(existing.expiry_date.replace(' ', 'T') + 'Z').getTime() - Date.now();
-    if (delta <= 0) return 'Expired';
+    if (delta <= 0) return __('Expired', 'flex-content-scheduler');
     const days = Math.floor(delta / (1000 * 60 * 60 * 24));
     const hours = Math.floor((delta % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    return `Expires in ${days} days, ${hours} hours`;
+    /* translators: %1$d: number of days, %2$d: number of hours */
+    return `${__('Expires in', 'flex-content-scheduler')} ${days} ${__('days', 'flex-content-scheduler')}, ${hours} ${__('hours', 'flex-content-scheduler')}`;
   }, [existing]);
 
   const submit = async () => {
@@ -136,12 +105,17 @@ export default function MetaBox() {
 
     try {
       const method = existing ? 'PUT' : 'POST';
-      const path = existing ? `/schedules/${existing.id}` : '/schedules';
-      const response = await request(path, { method, data: payload });
+      const path = existing ? `/flex-cs/v1/schedules/${existing.id}` : '/flex-cs/v1/schedules';
+      const response = await apiFetch({
+        path,
+        method,
+        data: payload,
+        headers: { 'X-WP-Nonce': window.flexCSMetabox?.nonce || '' }
+      });
       setExisting(response);
-      setMessage({ type: 'success', text: 'Schedule saved.' });
+      setMessage({ type: 'success', text: __('Schedule saved.', 'flex-content-scheduler') });
     } catch (error) {
-      const text = error?.message ? `Failed to save schedule: ${error.message}` : 'Failed to save schedule.';
+      const text = error?.message ? `${__('Failed to save schedule:', 'flex-content-scheduler')} ${error.message}` : __('Failed to save schedule.', 'flex-content-scheduler');
       setMessage({ type: 'error', text });
     } finally {
       setSaving(false);
@@ -152,12 +126,16 @@ export default function MetaBox() {
     if (!existing?.id) return;
     setSaving(true);
     try {
-      await request(`/schedules/${existing.id}`, { method: 'DELETE' });
+      await apiFetch({
+        path: `/flex-cs/v1/schedules/${existing.id}`,
+        method: 'DELETE',
+        headers: { 'X-WP-Nonce': window.flexCSMetabox?.nonce || '' }
+      });
       setExisting(null);
       setSchedule(initialState);
-      setMessage({ type: 'success', text: 'Schedule deleted.' });
+      setMessage({ type: 'success', text: __('Schedule deleted.', 'flex-content-scheduler') });
     } catch (error) {
-      const text = error?.message ? `Failed deleting schedule: ${error.message}` : 'Failed deleting schedule.';
+      const text = error?.message ? `${__('Failed deleting schedule:', 'flex-content-scheduler')} ${error.message}` : __('Failed deleting schedule.', 'flex-content-scheduler');
       setMessage({ type: 'error', text });
     } finally {
       setSaving(false);
@@ -166,12 +144,12 @@ export default function MetaBox() {
 
   return (
     <div className="flex-cs-metabox">
-      {loading ? <p>Loading...</p> : null}
+      {loading ? <p>{__('Loading...', 'flex-content-scheduler')}</p> : null}
       {message ? <p className={`flex-cs-message ${message.type}`}>{message.text}</p> : null}
       {countdown ? <p className="flex-cs-countdown">{countdown}</p> : null}
 
       <label>
-        Expiry Date
+        {__('Expiry Date', 'flex-content-scheduler')}
         <input
           type="datetime-local"
           value={schedule.expiry_date}
@@ -180,21 +158,21 @@ export default function MetaBox() {
       </label>
 
       <label>
-        Action
+        {__('Action', 'flex-content-scheduler')}
         <select
           value={schedule.expiry_action}
           onChange={(e) => setSchedule({ ...schedule, expiry_action: e.target.value })}
         >
-          <option value="unpublish">Unpublish</option>
-          <option value="delete">Delete</option>
-          <option value="redirect">Redirect</option>
-          <option value="change_status">Change status</option>
+          <option value="unpublish">{__('Unpublish', 'flex-content-scheduler')}</option>
+          <option value="delete">{__('Delete', 'flex-content-scheduler')}</option>
+          <option value="redirect">{__('Redirect', 'flex-content-scheduler')}</option>
+          <option value="change_status">{__('Change status', 'flex-content-scheduler')}</option>
         </select>
       </label>
 
       {schedule.expiry_action === 'redirect' ? (
         <label>
-          Redirect URL
+          {__('Redirect URL', 'flex-content-scheduler')}
           <input
             type="url"
             value={schedule.redirect_url}
@@ -205,26 +183,26 @@ export default function MetaBox() {
 
       {schedule.expiry_action === 'change_status' ? (
         <label>
-          New status
+          {__('New status', 'flex-content-scheduler')}
           <select
             value={schedule.new_status}
             onChange={(e) => setSchedule({ ...schedule, new_status: e.target.value })}
           >
-            <option value="draft">Draft</option>
-            <option value="private">Private</option>
-            <option value="pending">Pending</option>
-            <option value="publish">Publish</option>
+            <option value="draft">{__('Draft', 'flex-content-scheduler')}</option>
+            <option value="private">{__('Private', 'flex-content-scheduler')}</option>
+            <option value="pending">{__('Pending', 'flex-content-scheduler')}</option>
+            <option value="publish">{__('Publish', 'flex-content-scheduler')}</option>
           </select>
         </label>
       ) : null}
 
       <div className="flex-cs-actions">
         <button type="button" className="button button-primary" disabled={saving} onClick={submit}>
-          {saving ? 'Saving...' : existing ? 'Update' : 'Save'}
+          {saving ? __('Saving...', 'flex-content-scheduler') : existing ? __('Update', 'flex-content-scheduler') : __('Save', 'flex-content-scheduler')}
         </button>
         {existing ? (
           <button type="button" className="button" disabled={saving} onClick={remove}>
-            Delete
+            {__('Delete', 'flex-content-scheduler')}
           </button>
         ) : null}
       </div>

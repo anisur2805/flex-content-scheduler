@@ -26,6 +26,9 @@
 	<!-- Exclude build artifacts. -->
 	<exclude-pattern>/assets/dist/*</exclude-pattern>
 
+	<!-- Exclude test scaffolding and fixtures from production PHPCS checks. -->
+	<exclude-pattern>/tests/*</exclude-pattern>
+
 	<!-- Include the WordPress-Core ruleset. -->
 	<rule ref="WordPress-Core"/>
 
@@ -34,6 +37,11 @@
 
 	<!-- Include the WordPress-Extra ruleset. -->
 	<rule ref="WordPress-Extra"/>
+
+	<!-- This plugin uses Composer PSR-4 class naming, so file-name rules are not applicable. -->
+	<rule ref="WordPress.Files.FileName">
+		<severity>0</severity>
+	</rule>
 
 	<!-- Verify that the text_domain is set to the correct value. -->
 	<rule ref="WordPress.WP.I18n">

@@ -26,6 +26,11 @@ class FLEX_CS_WPDB_Stub {
 		return 1;
 	}
 
+	public function query( $query ) {
+		$this->last_query = $query;
+		return 1;
+	}
+
 	public function get_row( $query ) {
 		$this->last_query = $query;
 

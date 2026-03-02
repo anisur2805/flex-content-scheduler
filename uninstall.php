@@ -1,6 +1,11 @@
 <?php
 /**
  * Uninstall Flex Content Scheduler.
+ *
+ * Removes plugin options and drops the custom database table.
+ *
+ * @package Flex_Content_Scheduler
+ * @since   1.0.0
  */
 
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
@@ -15,6 +20,6 @@ delete_option( 'flex_cs_version' );
 delete_option( 'flex_cs_settings' );
 
 if ( class_exists( 'Anisur\\ContentScheduler\\Database\\ScheduleTable' ) ) {
-	$table = new Anisur\ContentScheduler\Database\ScheduleTable();
-	$table->drop_table();
+	$flex_cs_table = new Anisur\ContentScheduler\Database\ScheduleTable();
+	$flex_cs_table->drop_table();
 }
