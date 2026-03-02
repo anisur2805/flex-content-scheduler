@@ -150,6 +150,7 @@ $GLOBALS['flex_cs_is_admin']          = false;
 $GLOBALS['flex_cs_is_singular']       = true;
 $GLOBALS['flex_cs_queried_object_id'] = 0;
 $GLOBALS['flex_cs_post_meta']         = array();
+$GLOBALS['flex_cs_sent_emails']       = array();
 
 if ( ! function_exists( '__' ) ) {
 	function __( string $text, string $domain = '' ): string {
@@ -190,14 +191,14 @@ if ( ! function_exists( 'remove_filter' ) ) {
 }
 
 if ( ! function_exists( 'apply_filters' ) ) {
-	function apply_filters( string $hook, $value ) {
+	function apply_filters( string $hook, $value, ...$args ) {
 		if ( empty( $GLOBALS['flex_cs_filters'][ $hook ] ) ) {
 			return $value;
 		}
 
 		$filtered = $value;
 		foreach ( $GLOBALS['flex_cs_filters'][ $hook ] as $callback ) {
-			$filtered = call_user_func( $callback, $filtered );
+			$filtered = call_user_func_array( $callback, array_merge( array( $filtered ), $args ) );
 		}
 
 		return $filtered;
@@ -607,5 +608,19 @@ if ( ! function_exists( 'get_the_title' ) ) {
 if ( ! function_exists( 'get_post_type' ) ) {
 	function get_post_type( int $post_id ): string {
 		return 'post';
+	}
+}
+
+if ( ! function_exists( 'wp_mail' ) ) {
+	function wp_mail( $to, $subject, $message, $headers = array(), $attachments = array() ): bool {
+		$GLOBALS['flex_cs_sent_emails'][] = array(
+			'to'          => $to,
+			'subject'     => $subject,
+			'message'     => $message,
+			'headers'     => $headers,
+			'attachments' => $attachments,
+		);
+
+		return true;
 	}
 }

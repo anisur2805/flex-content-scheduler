@@ -9,6 +9,13 @@ class CronManagerTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 		$GLOBALS['flex_cs_actions_fired'] = array();
+		$GLOBALS['flex_cs_sent_emails']   = array();
+		$GLOBALS['flex_cs_options']['flex_cs_settings'] = array(
+			'default_action'         => 'unpublish',
+			'cron_enabled'           => true,
+			'notification_email'     => '',
+			'allowed_redirect_hosts' => array(),
+		);
 	}
 
 	public function test_custom_interval_is_registered(): void {
@@ -43,7 +50,12 @@ class CronManagerTest extends TestCase {
 	}
 
 	public function test_process_due_schedules_marks_item_as_processed_on_success(): void {
-		$schedule = (object) array( 'id' => 42 );
+		$schedule = (object) array(
+			'id'            => 42,
+			'post_id'       => 42,
+			'expiry_action' => 'unpublish',
+			'expiry_date'   => '2026-03-02 00:00:00',
+		);
 
 		$schedule_manager = $this->createMock( ScheduleManager::class );
 		$schedule_manager->method( 'get_due_schedules' )
@@ -60,7 +72,36 @@ class CronManagerTest extends TestCase {
 		$manager->process_due_schedules();
 	}
 
+	public function test_process_due_schedules_sends_notification_on_success_when_email_configured(): void {
+		$GLOBALS['flex_cs_options']['flex_cs_settings']['notification_email'] = 'owner@example.com';
+
+		$schedule = (object) array(
+			'id'            => 20,
+			'post_id'       => 88,
+			'expiry_action' => 'redirect',
+			'expiry_date'   => '2026-03-02 00:00:00',
+		);
+
+		$schedule_manager = $this->createMock( ScheduleManager::class );
+		$schedule_manager->method( 'get_due_schedules' )
+			->willReturnOnConsecutiveCalls( array( $schedule ), array() );
+		$schedule_manager->expects( $this->once() )
+			->method( 'mark_processed' )
+			->with( 20 )
+			->willReturn( true );
+
+		$expiry_actions = $this->createMock( ExpiryActions::class );
+		$expiry_actions->method( 'process' )->willReturn( true );
+
+		$manager = new CronManager( $schedule_manager, $expiry_actions );
+		$manager->process_due_schedules();
+
+		$this->assertCount( 1, $GLOBALS['flex_cs_sent_emails'] );
+		$this->assertSame( 'owner@example.com', $GLOBALS['flex_cs_sent_emails'][0]['to'] );
+	}
+
 	public function test_process_due_schedules_does_not_mark_processed_on_failure(): void {
+		$GLOBALS['flex_cs_options']['flex_cs_settings']['notification_email'] = 'owner@example.com';
 		$schedule = (object) array( 'id' => 42 );
 
 		$schedule_manager = $this->createMock( ScheduleManager::class );
@@ -73,5 +114,7 @@ class CronManagerTest extends TestCase {
 
 		$manager = new CronManager( $schedule_manager, $expiry_actions );
 		$manager->process_due_schedules();
+
+		$this->assertCount( 0, $GLOBALS['flex_cs_sent_emails'] );
 	}
 }
