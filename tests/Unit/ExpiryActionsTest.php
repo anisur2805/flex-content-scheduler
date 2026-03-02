@@ -21,6 +21,7 @@ class ExpiryActionsTest extends TestCase {
 		$GLOBALS['flex_cs_is_singular'] = true;
 		$GLOBALS['flex_cs_queried_object_id'] = 0;
 		$GLOBALS['flex_cs_post_meta'] = array();
+		$GLOBALS['flex_cs_sticky_posts'] = array();
 		$GLOBALS['flex_cs_options']['flex_cs_settings']['allowed_redirect_hosts'] = array();
 	}
 
@@ -84,6 +85,34 @@ class ExpiryActionsTest extends TestCase {
 
 		$this->assertTrue( $result );
 		$this->assertSame( '_flex_cs_redirect_url', $GLOBALS['flex_cs_deleted_meta'][0]['meta_key'] );
+	}
+
+	public function test_process_calls_sticky_when_action_is_sticky(): void {
+		$actions = new ExpiryActions();
+		$result  = $actions->process(
+			(object) array(
+				'post_id'       => 21,
+				'expiry_action' => 'sticky',
+			)
+		);
+
+		$this->assertTrue( $result );
+		$this->assertContains( 21, $GLOBALS['flex_cs_sticky_posts'] );
+	}
+
+	public function test_process_calls_unsticky_when_action_is_unsticky(): void {
+		$GLOBALS['flex_cs_sticky_posts'] = array( 21 );
+
+		$actions = new ExpiryActions();
+		$result  = $actions->process(
+			(object) array(
+				'post_id'       => 21,
+				'expiry_action' => 'unsticky',
+			)
+		);
+
+		$this->assertTrue( $result );
+		$this->assertNotContains( 21, $GLOBALS['flex_cs_sticky_posts'] );
 	}
 
 	public function test_process_returns_false_on_invalid_post_id(): void {

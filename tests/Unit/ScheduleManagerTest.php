@@ -174,6 +174,20 @@ class ScheduleManagerTest extends TestCase {
 		$this->assertFalse( $result );
 	}
 
+	public function test_create_schedule_accepts_sticky_action(): void {
+		$manager = new ScheduleManager();
+
+		$result = $manager->create_schedule(
+			array(
+				'post_id'       => 5,
+				'expiry_date'   => '2026-12-31 10:00:00',
+				'expiry_action' => 'sticky',
+			)
+		);
+
+		$this->assertSame( 10, $result );
+	}
+
 	public function test_update_schedule_returns_true_on_success(): void {
 		$manager = new ScheduleManagerForUpdateTest();
 

@@ -35,7 +35,7 @@ class ScheduleTable {
             id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             post_id BIGINT(20) UNSIGNED NOT NULL,
             expiry_date DATETIME NOT NULL,
-            expiry_action ENUM('unpublish','delete','redirect','change_status') NOT NULL DEFAULT 'unpublish',
+            expiry_action ENUM('unpublish','delete','redirect','change_status','sticky','unsticky') NOT NULL DEFAULT 'unpublish',
             redirect_url TEXT DEFAULT NULL,
             new_status VARCHAR(20) DEFAULT NULL,
             is_processed TINYINT(1) NOT NULL DEFAULT 0,

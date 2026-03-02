@@ -472,11 +472,11 @@ class ScheduleManager {
 		 *
 		 * @param array $allowed_actions Array of action type strings.
 		 */
-		$allowed_actions = apply_filters( 'flex_cs_expiry_actions', array( 'unpublish', 'delete', 'redirect', 'change_status' ) );
+			$allowed_actions = apply_filters( 'flex_cs_expiry_actions', array( 'unpublish', 'delete', 'redirect', 'change_status', 'sticky', 'unsticky' ) );
 
 			// Validate filter output: ensure it is an array of strings.
 		if ( ! is_array( $allowed_actions ) ) {
-			$allowed_actions = array( 'unpublish', 'delete', 'redirect', 'change_status' );
+				$allowed_actions = array( 'unpublish', 'delete', 'redirect', 'change_status', 'sticky', 'unsticky' );
 		} else {
 			$allowed_actions = array_values( array_filter( $allowed_actions, 'is_string' ) );
 		}

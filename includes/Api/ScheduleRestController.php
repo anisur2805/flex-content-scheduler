@@ -473,7 +473,7 @@ class ScheduleRestController extends WP_REST_Controller {
 					'allowed_redirect_hosts' => $this->sanitize_redirect_hosts( $incoming['allowed_redirect_hosts'] ?? array() ),
 				);
 
-				$allowed_actions = array( 'unpublish', 'delete', 'redirect', 'change_status' );
+				$allowed_actions = array( 'unpublish', 'delete', 'redirect', 'change_status', 'sticky', 'unsticky' );
 				if ( ! in_array( $settings['default_action'], $allowed_actions, true ) ) {
 					return new WP_Error( 'flex_cs_invalid_default_action', __( 'Invalid default action.', 'flex-content-scheduler' ), array( 'status' => 400 ) );
 				}

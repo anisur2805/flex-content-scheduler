@@ -62,6 +62,8 @@ export default function SettingsPanel() {
             <option value="delete">{__('Delete', 'flex-content-scheduler')}</option>
             <option value="redirect">{__('Redirect', 'flex-content-scheduler')}</option>
             <option value="change_status">{__('Change status', 'flex-content-scheduler')}</option>
+            <option value="sticky">{__('Sticky', 'flex-content-scheduler')}</option>
+            <option value="unsticky">{__('Unsticky', 'flex-content-scheduler')}</option>
           </select>
         </label>
 
